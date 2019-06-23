@@ -1,0 +1,26 @@
+language: python
+cache: pip
+python:
+  - '3.6'
+install:
+  - pip install https://download.pytorch.org/whl/cpu/torch-0.4.1-cp36-cp36m-linux_x86_64.whl
+  - pip install -r requirements.txt
+  - pip install flake8 pytest pytest-cov codecov -U
+script:
+  - python -m flake8
+  - python -m pytest --cov=torch_model_state
+  - python setup.py install
+  - torch-model-state tests/build/checkpoint.sf
+  - git stash --all
+  - python -c "import torch_model_state"
+after_success:
+  - codecov --token=86bb0e86-59b3-451a-a5b3-1b86cfebb5f1
+deploy:
+  provider: pypi
+  user: sfzhou
+  on:
+    branch: master
+  skip_cleanup: true
+  skip_existing: true
+  password:
+    secure: Gcm5ZR84NAQt/DpFshYrMA9r7sB2stvk6dSqyxsNU4nA6yNYe5ExBxiP3JhpYdwQGPoo68gB40XKV3DZghre8kAb5/Q2a618XGjPhnWuJnThkD4KIjgamQMuRSdFVCZUKJ1qwvbX8mUAHZMVKYoV9/9/VbqS4F1Eqb8buPeorxBzZlBQzGH4pawiYWH/OkbjJoLULYeayR3zGtN8y+a7XwGrHmIUf2Rsr/U2es+OA7liY5ip0YXH+Ewn6GdDgM9aDyZZUW5rbyZNWJgaTTbZiXEv69za4j73mP8RvRRs2/WMOdinpM33Dx7fUJyGFwyN84Ema3h/QKH+QiK7ay9KShlUsT4tiHY99aThrbfzS/rln+ErG+UafV4Fj5ifJt7eRno47aLZ/LUKMX+invBkS6J2f2vLWgmXa9WFTZeatw9uJiAQEk14kKfeHsqQMXZ++2h9L4MrOpQFGkug/NDvpIHAI4y+QRSYbLM8hE78Ro0j7ilAtRoKptsqcFPGSdSb2CAms8F57oClz51t46CQOrsaQa5qpRZ+BgYyz08K082+hvNPRfS6zqF4nt6Sdi+/K2QxSq7V7bG5vESFOK1WLYsRj/5UMosTlTp2yW/Qxz1+5jYqiJxI36zYOrqE6MWsYs0wuWngz4NpRQgG1fhUy1RaS/68Wkm70wNVlPeHNp4=
